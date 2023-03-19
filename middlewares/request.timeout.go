@@ -2,9 +2,11 @@ package middleware
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
+	"urlshortner/utils"
 
 	"github.com/gin-gonic/gin"
 )
@@ -31,9 +33,9 @@ func TimeoutMiddleware(timeout time.Duration) gin.HandlerFunc {
 		case <-ctx.Done():
 			// If the timeout occurs, set the response code to 408 (Request Timeout)
 			// and return a custom error message
-			c.AbortWithStatusJSON(http.StatusRequestTimeout, gin.H{
-				"error": fmt.Sprintf("Request timed out after %v", timeout),
-			})
+			_, errBody := utils.HandleHTTPError(errors.New(fmt.Sprintf("Request timed out after %v", timeout)))
+			c.AbortWithStatusJSON(http.StatusRequestTimeout, errBody)
+			return
 		}
 	}
 }
