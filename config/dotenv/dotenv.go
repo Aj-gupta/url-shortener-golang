@@ -16,6 +16,7 @@ type config struct {
 	PgUser          string `mapstructure:"PG_USER"`
 	ApiKey          string `mapstructure:"URL_SHORTNER_API_KEY"`
 	ShortURLBaseURI string `mapstructure:"SHORT_URL_BASE_URI"`
+	RequestTimeout  int64  `mapstructure:"REQUEST_TIMEOUT"`
 }
 
 var Global config
