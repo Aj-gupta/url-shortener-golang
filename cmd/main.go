@@ -138,9 +138,6 @@ func SetupRouter() *gin.Engine {
 		}),
 	}))
 
-	// Logs all panic to error log
-	//   - stack means whether output the stack info.
-	router.Use(ginzap.RecoveryWithZap(Logger.Log, true))
 	/**
 	@description Setup Middleware
 	*/
@@ -165,6 +162,11 @@ func SetupRouter() *gin.Engine {
 		dotenv.Global.RequestTimeout = 10
 	}
 	router.Use(middleware.TimeoutMiddleware(time.Duration(dotenv.Global.RequestTimeout) * time.Second))
+	/*
+		@description panic middleware
+	*/
+	router.Use(middleware.PanicHandler)
+
 	/**
 	@description Init All Route
 	*/
