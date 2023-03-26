@@ -115,10 +115,8 @@ func SetupRouter() *gin.Engine {
 		TimeFormat: time.RFC3339,
 		Context: ginzap.Fn(func(c *gin.Context) []zapcore.Field {
 			fields := []zapcore.Field{}
-			// log request ID
-			if requestID := c.Writer.Header().Get("X-Request-Id"); requestID != "" {
-				fields = append(fields, zap.String("request-id", requestID))
-			}
+			// log all headers
+			fields = append(fields, zap.Any("headers", c.Request.Header))
 
 			// log trace and span ID
 			if trace.SpanFromContext(c.Request.Context()).SpanContext().IsValid() {
