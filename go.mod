@@ -6,13 +6,16 @@ require (
 	github.com/danielkov/gin-helmet v0.0.0-20171108135313-1387e224435e
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/gzip v0.0.6
+	github.com/gin-contrib/requestid v0.0.6
 	github.com/gin-gonic/gin v1.8.2
 	github.com/uptrace/bun v1.1.12
 	github.com/uptrace/bun/dialect/pgdialect v1.1.12
+	go.opentelemetry.io/otel/trace v1.13.0
 )
 
 require (
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
+	github.com/google/uuid v1.3.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -26,7 +29,6 @@ require (
 	github.com/vmihailenco/msgpack/v5 v5.3.5 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
 	go.opentelemetry.io/otel v1.13.0 // indirect
-	go.opentelemetry.io/otel/trace v1.13.0 // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
