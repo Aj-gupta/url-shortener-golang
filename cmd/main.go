@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -50,6 +51,7 @@ func main() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("listen: %s\n", err)
 		}
+		go func() { fmt.Println("last") }()
 	}()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
@@ -105,6 +107,10 @@ func SetupRouter() *gin.Engine {
 	/*
 		@description add requestID middleware
 	*/
+	/*
+		@description panic middleware
+	*/
+	router.Use(middleware.PanicHandler)
 	router.Use(requestid.New())
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.
@@ -162,10 +168,6 @@ func SetupRouter() *gin.Engine {
 		dotenv.Global.RequestTimeout = 10
 	}
 	router.Use(middleware.TimeoutMiddleware(time.Duration(dotenv.Global.RequestTimeout) * time.Second))
-	/*
-		@description panic middleware
-	*/
-	router.Use(middleware.PanicHandler)
 
 	/**
 	@description Init All Route
