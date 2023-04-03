@@ -105,12 +105,12 @@ func SetupRouter() *gin.Engine {
 	*/
 	validator.Init()
 	/*
-		@description add requestID middleware
-	*/
-	/*
 		@description panic middleware
 	*/
-	router.Use(middleware.PanicHandler)
+	router.Use(middleware.PanicHandler())
+	/*
+		@description add requestID middleware
+	*/
 	router.Use(requestid.New())
 	// Add a ginzap middleware, which:
 	//   - Logs all requests, like a combined access and error log.
@@ -168,7 +168,10 @@ func SetupRouter() *gin.Engine {
 		dotenv.Global.RequestTimeout = 10
 	}
 	router.Use(middleware.TimeoutMiddleware(time.Duration(dotenv.Global.RequestTimeout) * time.Second))
-
+	/*
+		@description panic middleware
+	*/
+	router.Use(middleware.PanicHandler())
 	/**
 	@description Init All Route
 	*/
