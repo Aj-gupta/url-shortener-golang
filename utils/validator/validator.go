@@ -85,15 +85,25 @@ func (v *Validator) Validate(val interface{}) map[string]interface{} {
 		// Check if the error is a ValidationErrors slice
 		if validationErrors, ok := err.(validator.ValidationErrors); ok {
 			i := 0
+			field := map[string]interface{}{}
+
 			for _, validationError := range validationErrors {
-				errs[validationError.Field()] = Error{
+				field[validationError.Field()] = Error{
 					FieldName:    validationError.Field(),
 					ErrorMessage: validationError.Translate(translator),
 				}
+				errs["fields"] = field
 				i++
 			}
-			errs["first"] = validationErrors[0].Translate(translator)
-			errs["errorsLength"] = i
+
+			errs["meta"] = map[string]interface{}{
+				"first": Error{
+					FieldName:    validationErrors[0].Field(),
+					ErrorMessage: validationErrors[0].Translate(translator),
+				},
+				"errorsLength": i,
+			}
+
 		}
 	}
 	return errs

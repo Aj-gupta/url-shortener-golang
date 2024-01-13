@@ -1,40 +1,52 @@
 package utils
 
-import "github.com/gin-gonic/gin"
+import (
+	"fmt"
+	"urlshortner/utils/validator"
+
+	"github.com/gin-gonic/gin"
+)
 
 func HandleHTTPError(err error) (int, gin.H) {
 	var statusCode int
 	var errors map[string]interface{}
-	errorMessage := err.Error()
+	errorMessage := validator.Error{FieldName: "", ErrorMessage: err.Error()}
 	errorsLength := 1
-	pgErr, isPGErr := HandlePostgresError(err)
-	if isPGErr {
-		err = pgErr
-		errorMessage = err.Error()
-	}
+
 	switch e := err.(type) {
 	case CustomAPIErr:
 		statusCode = e.Status()
 		errors = e.ErrorArr()
-		if errors["errorsLength"] != nil {
-			errorsLength = errors["errorsLength"].(int)
-			if errors["errorsLength"] == 1 {
-				errorMessage = errors["first"].(string)
+
+		errorsMeta := map[string]interface{}{}
+
+		if errors["meta"] != nil {
+			errorsMeta = errors["meta"].(map[string]interface{})
+		}
+		if errors["meta"] != nil && errorsMeta["errorsLength"] != nil {
+			errorsLength = errorsMeta["errorsLength"].(int)
+			if errorsMeta["errorsLength"] == 1 {
+				errorMessage = errorsMeta["first"].(validator.Error)
 			}
 		} else {
+			fmt.Println("<<<<<<<<<<<<<<<<<<<<<<<<<dfdf>>>>>>>>>>>>>>>>>>>>>>>")
 			errors = make(map[string]interface{})
-			errors["errorsLength"] = errorsLength
-			errors["first"] = errorMessage
+			errors["meta"] = map[string]interface{}{
+				"errorsLength": errorsLength,
+				"first":        errorMessage,
+			}
 		}
 
 	default:
 		errors = make(map[string]interface{})
-		errors["errorsLength"] = errorsLength
-		errors["first"] = errorMessage
+		errors["meta"] = map[string]interface{}{
+			"errorsLength": errorsLength,
+			"first":        errorMessage,
+		}
 	}
 	return statusCode, gin.H{
 		"error":   true,
-		"message": errorMessage,
+		"message": errorMessage.ErrorMessage,
 		"errors":  errors,
 	}
 }
